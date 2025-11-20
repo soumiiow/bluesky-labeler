@@ -18,10 +18,10 @@ HANDLE = os.getenv("USERNAME")
 APP_PASSWORD = os.getenv("PW")
 
 # Path to CSV containing search queries
-QUERIES_CSV = Path("labeler_inputs/coercion_queries.csv")
+QUERIES_CSV = Path("labeler_inputs/queries_v1.csv")
 
 # How many posts to fetch per query
-POSTS_PER_QUERY = 18
+POSTS_PER_QUERY = 7
 
 # Output file
 OUTPUT_CSV = "posts_data_raw.csv"
@@ -40,8 +40,8 @@ def login(handle: str, app_password: str) -> str:
 
 def load_queries_from_csv() -> List[str]:
     """
-    Load keyword queries from coercion_queries.csv.
-    Only the 'query' column is used.
+    Load keyword queries from queries_v1.csv.
+    Only the 'phrase' column is used as the search keyword.
     """
     if not QUERIES_CSV.exists():
         raise FileNotFoundError(f"{QUERIES_CSV} not found. Please create the file.")
@@ -50,7 +50,7 @@ def load_queries_from_csv() -> List[str]:
     with QUERIES_CSV.open("r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            q = (row.get("query") or "").strip()
+            q = (row.get("phrase") or "").strip()
             if q:
                 queries.append(q)
 
@@ -75,6 +75,24 @@ def search_posts(query: str, headers: Dict[str, str], limit: int = 25) -> List[D
 
     data = r.json()
     return data.get("posts", [])
+
+
+def uri_to_web_link(uri: str) -> str:
+    """Convert an at:// URI into a https://bsky.app/... link for debugging/CSV."""
+    if not uri or not isinstance(uri, str):
+        return ""
+    if not uri.startswith("at://"):
+        return ""
+    try:
+        # at://did:plc:abc/app.bsky.feed.post/3xyz
+        _, did, collection, rkey = uri.split("/", 3)
+    except ValueError:
+        return ""
+
+    if collection == "app.bsky.feed.post":
+        return f"https://bsky.app/profile/{did}/post/{rkey}"
+    # Fallback for other collections: just profile link
+    return f"https://bsky.app/profile/{did}"
 
 
 def main():
@@ -104,31 +122,53 @@ def main():
             seen_uris.add(uri)
 
             try:
-                print(f"[FETCH] {uri}")
-                row = get_post_as_csv_row_http(uri, token=token)
+                print(f"[COLLECT] {uri}")
+                record = p.get("record", {})
+                author = p.get("author", {})
+                row = {
+                    "uri": uri,
+                    "cid": p.get("cid", ""),
+                    "author_did": author.get("did", ""),
+                    "author_handle": author.get("handle", ""),
+                    # prefer createdAt from the record, fall back to indexedAt from search
+                    "created_at": record.get("createdAt", p.get("indexedAt", "")),
+                    "text": record.get("text", ""),
+                }
                 rows.append(row)
-                time.sleep(0.2)  # avoid rate limit
             except Exception as e:
-                print(f"[ERROR] Failed to fetch {uri}: {e}")
+                print(f"[ERROR] Failed to collect data for {uri}: {e}")
 
     if not rows:
         print("[DONE] No posts fetched.")
         return
 
-    # Write results to CSV
-    # Some rows may have extra fields (e.g., different embed_* combinations),
-    # so compute the union of all keys across rows.
-    all_keys = set()
+    # Write results to CSV with a fixed set of columns + link
+    # We only keep a small set of useful fields from each row.
+    filtered_rows: List[Dict[str, Any]] = []
     for r in rows:
-        all_keys.update(r.keys())
-    fieldnames = sorted(all_keys)
+        uri = r.get("uri", "")
+        filtered_rows.append(
+            {
+                "uri": uri,
+                "cid": r.get("cid", ""),
+                "author_did": r.get("author_did", ""),
+                "author_handle": r.get("author_handle", ""),
+                # Some helper implementations may use different timestamp keys;
+                # prefer created_at, then indexed_at, else empty.
+                "created_at": r.get("created_at", r.get("indexed_at", "")),
+                "text": r.get("text", ""),
+                "link": uri_to_web_link(uri),
+            }
+        )
 
-    print(f"\n[WRITE] Writing {len(rows)} rows -> {OUTPUT_CSV}")
+    fieldnames = ["uri", "cid", "author_did", "author_handle", "created_at", "text", "link"]
+
+    print(f"\n[WRITE] Writing {len(filtered_rows)} rows -> {OUTPUT_CSV}")
 
     with open(OUTPUT_CSV, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
-        for r in rows:
+        for r in filtered_rows:
             writer.writerow(r)
 
     print("[DONE] Scraper finished.")
