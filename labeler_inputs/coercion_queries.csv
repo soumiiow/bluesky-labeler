@@ -1,0 +1,22 @@
+query,category,notes
+without consent,core,explicit non-consent phrase
+without my consent,core,variant non-consent
+non-consensual,core,general term for non-consensual acts
+forced me to,core,forced pattern
+forced me into,core,another forced verb structure
+he made me do,core,coercive phrasing
+she made me do,core,gender variant phrase
+i didn't want to but,core,common non-consensual phrasing
+sextortion,core,direct sextortion term
+sexually coerced,core,explicit coercion phrase
+threatened to leak,threat,leak + threat
+threatened to post,threat,threat to upload/share
+threatened to expose,threat,threat to expose content
+blackmail nudes,threat,blackmail + nudes
+blackmailed me,threat,general blackmail pattern
+if you don't send,threat,conditional threat used in sextortion
+if you don't pay,threat,payment threat variant
+pressured me into,pressure,soft coercion
+manipulated me into,pressure,soft coercion via manipulation
+coercive control,pressure,relationship coercion concept
+guilt-tripped me,pressure,emotional coercion
