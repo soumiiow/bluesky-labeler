@@ -9,7 +9,7 @@ import re
 
 PERSPECTIVE_API_URL = "https://commentanalyzer.googleapis.com/v1/comments:analyze"
 #TODO: replace with Perspective API key
-PERSPECTIVE_API_KEY = "<API_KEY>"
+# PERSPECTIVE_API_KEY = "<API_KEY>"
 
 # Valid labels allowed to be returned
 label_names = set([
@@ -73,29 +73,29 @@ class AutomatedLabeler:
 
         return literal_map, regex_patterns
     
-    def get_perspective_scores(text: str, attributes=None):
-        if attributes is None:
-            attributes = ["TOXICITY", "SARCASM", "FLIRTATION", "INSULT", "THREAT", "SEXUAL_EXPLICIT"]
+    # def get_perspective_scores(text: str, attributes=None):
+    #     if attributes is None:
+    #         attributes = ["TOXICITY", "SARCASM", "FLIRTATION", "INSULT", "THREAT", "SEXUAL_EXPLICIT"]
 
-        data = {
-            "comment": {"text": text},
-            "languages": ["en"],
-            "requestedAttributes": {attr: {} for attr in attributes}
-        }
-        response = requests.post(
-            f"{PERSPECTIVE_API_URL}?key={PERSPECTIVE_API_KEY}",
-            json=data,
-            timeout=10
-        ).json()
+    #     data = {
+    #         "comment": {"text": text},
+    #         "languages": ["en"],
+    #         "requestedAttributes": {attr: {} for attr in attributes}
+    #     }
+    #     response = requests.post(
+    #         f"{PERSPECTIVE_API_URL}?key={PERSPECTIVE_API_KEY}",
+    #         json=data,
+    #         timeout=10
+    #     ).json()
         
-        # Extract scores
-        scores = {}
-        for attr in attributes:
-            try:
-                scores[attr] = response["attributeScores"][attr]["summaryScore"]["value"]
-            except KeyError:
-                scores[attr] = 0.0
-        return scores
+    #     # Extract scores
+    #     scores = {}
+    #     for attr in attributes:
+    #         try:
+    #             scores[attr] = response["attributeScores"][attr]["summaryScore"]["value"]
+    #         except KeyError:
+    #             scores[attr] = 0.0
+    #     return scores
     
     def load_review_keywords(self, filepath: str):
         """Load review-trigger keywords from CSV into two lists: regex and literal."""
@@ -170,20 +170,20 @@ class AutomatedLabeler:
         # perspective API scoring
         scores = self.get_perspective_scores(content)
 
-        # Humor / sarcasm
-        humor_flags = scores.get("SARCASM", 0.0) > 0.7 or scores.get("FLIRTATION", 0.0) > 0.7
-        if humor_flags:
-            # TODO decide labels.add("meta:humor-detected")
-            severity_level -= 1  # downgrade severity
+        # humor / sarcasm
+        # humor_flags = scores.get("SARCASM", 0.0) > 0.7 or scores.get("FLIRTATION", 0.0) > 0.7
+        # if humor_flags:
+        #     # TODO decide labels.add("meta:humor-detected")
+        #     severity_level -= 1  # downgrade severity
 
-        # Toxicity adjustment
-        toxicity = scores.get("TOXICITY", 0.0)
-        if toxicity > 0.8:
-            severity_score += 1
-        elif toxicity >= 0.6:
-            severity_level += 0.5
-        elif toxicity < 0.3:
-            severity_level -= 0.5            
+        # # Toxicity adjustment
+        # toxicity = scores.get("TOXICITY", 0.0)
+        # if toxicity > 0.8:
+        #     severity_score += 1
+        # elif toxicity >= 0.6:
+        #     severity_level += 0.5
+        # elif toxicity < 0.3:
+        #     severity_level -= 0.5            
         
         # Final severity level assignment
         if severity_score >= 6:
