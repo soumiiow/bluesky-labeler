@@ -78,7 +78,7 @@ class AutomatedLabeler:
         
         for _, row in df.iterrows():
             phrase = row["phrase_or_pattern"]
-            if row["is_regex"] == True or str(row["is_regex"]).upper() == "TRUE":
+            if row["is_regex"] or str(row["is_regex"]).upper() == "TRUE":
                 try:
                     regex.append(re.compile(phrase, re.IGNORECASE))
                 except re.error as e:
