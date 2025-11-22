@@ -1,0 +1,65 @@
+category,phrase_or_pattern,is_regex,notes
+coercion,coerced,FALSE,direct mention
+coercion,coercing,FALSE,direct mention
+coercion,coercive,FALSE,direct mention
+coercion,forced me,FALSE,first-person coercion
+coercion,he forced,FALSE,common coercion phrasing
+coercion,against my will,FALSE,explicit lack of consent
+coercion,without my consent,FALSE,explicit lack of consent
+coercion,pressured me,FALSE,emotional coercion
+coercion,threatened me,FALSE,explicit harm/coercion
+coercion,made me do it,FALSE,implicit coercion
+coercion,manipulated me,FALSE,emotional coercion
+coercion,i said no,FALSE,consent violation
+coercion,i couldn't say no,FALSE,implied coercion
+victim,i was a victim,FALSE,personal experience
+victim,i survived,FALSE,survivor narrative
+victim,what happened to me,FALSE,personal story
+sexual,sexual coercion,FALSE,explicit term
+sexual,non-consensual,FALSE,explicit term
+support,i need help,FALSE,support-seeking
+support,i need advice,FALSE,support-seeking
+support,can someone help,FALSE,support-seeking
+humor,just kidding,FALSE,classic sarcasm
+humor,jk,FALSE,classic sarcasm
+humor,lol,FALSE,laughing / playful tone
+humor,sarcasm,FALSE,explicit label
+humor,not serious,FALSE,explicit label
+humor,/s\b,TRUE,sarcasm marker
+humor,satire,FALSE,explicit label
+humor,lmfao,FALSE,laughing
+humor,gmfu,FALSE,laughing / disbelief
+humor,bruh,FALSE,Gen Z interjection
+humor,ha(ha)+,TRUE,laughing / playful tone
+humor,ki(ki)+,TRUE,laughing / playful tone
+humor,sus,FALSE,Gen Z slang
+humor,cap,FALSE,Gen Z slang
+humor,fr,FALSE,Gen Z slang / agreement
+humor,smh,FALSE,Gen Z slang / disapproval
+humor,oof,FALSE,Gen Z slang / exclamation
+humor,hihi,FALSE,playful tone
+humor,heh,FALSE,playful tone
+humor,bestie,FALSE,ironic address
+humor,slay,FALSE,ironic celebration
+humor,love that for me,FALSE,ironic misfortune
+humor,living the dream,FALSE,ironic sarcasm
+humor,my villain era,FALSE,ironic self-description
+humor,clown behavior,FALSE,self-deprecation
+humor,entering my era,FALSE,narrativizing trauma
+humor,main character energy,FALSE,narrativizing trauma
+humor,pov,FALSE,point of view / skit
+humor,not me doing,FALSE,ironic third person
+humor,hypothetically,FALSE,distancing mechanism
+humor,asking for a friend,FALSE,deflection
+humor,in minecraft,FALSE,gaming slang suffix
+humor,in roblox,FALSE,gaming slang suffix
+humor,for legal reasons this is a joke,FALSE,meme disclaimer
+humor,no biggie,FALSE,minimization
+humor,nbd,FALSE,no big deal
+humor,literally me,FALSE,identification with meme
+humor,it's giving,FALSE,comparative slang
+humor,unserious,FALSE,calling situation ridiculous
+humor,goofy,FALSE,minimizing descriptor
+humor,silly,FALSE,minimizing descriptor
+humor,just a prank,FALSE,abuser excuse / red flag
+humor,parody,FALSE,explicit label

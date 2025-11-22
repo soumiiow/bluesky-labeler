@@ -4,100 +4,145 @@ from typing import List
 from atproto import Client
 from .label import post_from_url
 import pandas as pd
-from PIL import Image
-import imagehash
-from pathlib import Path
+import ahocorasick
 import re
 
-label_names = set(["sexual violence", "emotional coercion", "reputational coercion", "self harm", "survivor discussion", "fictional depiction",
-              "traumatic news"])
+# Valid labels allowed to be returned
+label_names = set([
+    "sexual violence",
+    "emotional coercion",
+    "reputational coercion",
+    "self harm",
+    "survivor discussion",
+    "fictional depiction",
+    "traumatic news"
+])
+
+# Labels that increase severity more heavily
+CRITICAL_LABELS = {"sexual violence", "self harm"}
+
 
 class AutomatedLabeler:
     """Automated labeler implementation"""
 
     def __init__(self, client: Client, input_dir):
-        # Constructor
         self.client = client
-        # load the coersion lexicon into a dictionary with the name of the label as value and words as keys
-        self.coercion_lexicon = self.load_into_map(f"{input_dir}/lexicon.csv")
-        # coercion regexes   
-        self.regex_patterns = self.load_regex_patterns(f"{input_dir}/regex-lexicon.csv")
-        
-    def load_into_set(self, filepath: str, column_name: str) -> set:
-        """Load lines from a file into a set"""
-        return set(pd.read_csv(filepath)[column_name].tolist())
 
-    def load_into_map(self, filepath) -> dict:
-        """Load lines from a CSV into a dictionary: phrase -> category"""
+        # Load both regex and literal phrases from the unified CSV
+        self.literal_lexicon, self.regex_patterns = self.load_lexicon(f"{input_dir}/lexicon.csv")
+
+        # Build automaton only from literal (non-regex) entries
+        self.phrase_automaton = self.build_automaton(self.literal_lexicon)
+        
+        # Load human-review signaling keywords
+        self.review_literals, self.review_regexes = self.load_review_keywords(f"{input_dir}/review-lexicon.csv")
+
+    def load_lexicon(self, filepath: str):
+        """
+        Loads lexicon.csv which contains:
+        category,phrase_or_pattern,is_regex,notes
+
+        Returns:
+            literal_map: dict → phrase -> category
+            regex_patterns: list → (compiled_regex, category)
+        """
         df = pd.read_csv(filepath)
-        return {row["phrase"].lower(): row["category"].lower() for _, row in df.iterrows()}
-    
-    def load_regex_patterns(self, filepath: str) -> List[tuple]:
-        """Load regex-lexicon.csv as precompiled patterns: (regex, category)"""
-        df = pd.read_csv(filepath)
-        compiled = []
+
+        literal_map = {}
+        regex_patterns = []
+
         for _, row in df.iterrows():
-            try:
-                regex = re.compile(row["pattern"], re.IGNORECASE)
-                compiled.append((regex, row["category"].lower()))
-            except re.error as e:
-                print(f"[WARN] Skipping invalid regex: {row['pattern']} -> {e}")
-        return compiled
+            category = row["category"].lower()
+            phrase = row["phrase_or_pattern"]
+            is_regex = str(row["is_regex"]).strip().upper() == "TRUE"
+
+            if is_regex:
+                # Try compiling and add to regex patterns list
+                try:
+                    regex = re.compile(phrase, re.IGNORECASE)
+                    regex_patterns.append((regex, category))
+                except re.error as e:
+                    print(f"[WARN] Invalid regex skipped: {phrase} ({e})")
+            else:
+                # Literal phrase goes into automaton
+                literal_map[phrase.lower()] = category
+
+        return literal_map, regex_patterns
+    
+    def load_review_keywords(self, filepath: str):
+        """Load review-trigger keywords from CSV into two lists: regex and literal."""
+        df = pd.read_csv(filepath)
+
+        literal = []
+        regex = []
+        
+        for _, row in df.iterrows():
+            phrase = row["phrase_or_pattern"]
+            if row["is_regex"] == True or str(row["is_regex"]).upper() == "TRUE":
+                try:
+                    regex.append(re.compile(phrase, re.IGNORECASE))
+                except re.error as e:
+                    print(f"[WARN] Invalid review regex skipped: {phrase} ({e})")
+            else:
+                literal.append(phrase.lower())
+        
+        return literal, regex
+    
+
+    def build_automaton(self, lexicon_map):
+        A = ahocorasick.Automaton()
+        for phrase, label in lexicon_map.items():
+            A.add_word(phrase, (phrase, label))
+        A.make_automaton()
+        return A
 
     def moderate_post(self, url: str) -> List[str]:
         """
-        Apply moderation to the post specified by the given url
-        Args:
-            url (str): The URL of the Bluesky post to moderate.
-        Returns:
-            List[str]: A list of labels to be added to the post.
+        Apply moderation to the given Bluesky post URL.
+        Returns a list of labels.
         """
-        
-        # get post from url
         post = post_from_url(self.client, url)
-        # take content and then check for words in the coersion lexicon
-        # keep track of labels to be added
-        # keep track of words found to avoid duplicate labels
-        # for figuring out severity level, we can use a simple count of words found
         content = post.value.text.lower()
-        labels = set() # make this a set to avoid duplicate labels
-        matches_found = set()
-        severity_count = 0
-        severity_level = 1 # default to low severity. max is 3
-        
-        #rework this logic
-        for word, label in self.coercion_lexicon.items():
-            if word in content and word not in matches_found:
-                # if name of label is in the accepted labels, add it
-                if label in label_names:
-                    labels.add(label)
-                    matches_found.add(word)
-                    severity_count += 1
-                # Check regex patterns
-        for regex, label in self.regex_patterns:
-            if regex.search(content) and regex.pattern not in matches_found:
-                if label in label_names:
-                    labels.add(label)
-                    matches_found.add(regex.pattern)
-                    severity_count += 1
 
-        # based on severity count, we can add additional labels if needed
-        if severity_count >= 5:
-            severity_level = 3
-        elif severity_count >= 3:
-            severity_level = 2
-        labels.add(f"severity-level-{severity_level}")
-        # if severity level is high, we can send it into perspective api for further analysis
+        labels = set()
+        matches_found = set()
+        severity_score = 0
         
-        # Optional human review for ambiguity
-        if any(token in content for token in ["?", "just kidding", "lol"]):
-            labels.add("meta:needs-human-review")
-        return labels
-    
-    
-    #todo:
-    # workshop severity level logic
-    # integrate perspective api for high severity posts
-    # toxicity score brings up the severity level by 1 if above a certain threshold
-    # humor score brings down the severity level by 1 if above a certain threshold
-    # humor score could also trigger a human review label
+        # Check for literal phrases using Aho-Corasick automaton
+        for end_idx, (phrase, category) in self.phrase_automaton.iter(content):
+            if category in label_names and phrase not in matches_found:
+                labels.add(category)
+                matches_found.add(phrase)
+                severity_score += 2 if category in CRITICAL_LABELS else 1
+
+        # Check for regex patterns
+        for regex, category in self.regex_patterns:
+            if regex.search(content) and regex.pattern not in matches_found:
+                if category in label_names:
+                    labels.add(category)
+                    matches_found.add(regex.pattern)
+                    severity_score += 2 if category in CRITICAL_LABELS else 1
+
+        if severity_score >= 6:
+            severity_level = 3
+        elif severity_score >= 3:
+            severity_level = 2
+        else:
+            severity_level = 1
+
+        labels.add(f"severity-level-{severity_level}")
+        
+        # Check for human review keywords
+        needs_review = False
+        for review_word in self.review_literals:
+            if review_word in content:
+                labels.add("human-review")
+                needs_review = True
+                break
+        if not needs_review:
+            for review_regex in self.review_regexes:
+                if review_regex.search(content):
+                    labels.add("human-review")
+                    break
+
+        return list(labels)
