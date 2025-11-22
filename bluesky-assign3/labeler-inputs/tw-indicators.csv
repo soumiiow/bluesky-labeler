@@ -1,0 +1,13 @@
+category,phrase,notes
+warning,"tw","shorthand"
+warning,"cw","shorthand"
+warning,"trigger warning","explicit"
+warning,"content warning","explicit"
+warning,"tw:","prefix style"
+warning,"cw:","prefix style"
+warning,"tw -","variant style"
+warning,"cw -","variant style"
+warning,"tw//","casual format"
+warning,"cw//","casual format"
+warning,"warning: sensitive content","full phrase"
+warning,"this may be triggering","indirect warning"

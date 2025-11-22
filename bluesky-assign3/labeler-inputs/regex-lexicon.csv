@@ -1,0 +1,12 @@
+category,regex_pattern,notes
+coercion,"i (was|am) forced","captures tense variation"
+coercion,"force(d|s)? me","match forced/forces"
+coercion,"coerc(e|ed|ion)","all coerc- forms"
+coercion,"against my (will|consent)","strong signal"
+coercion,"without (my )?consent","optional my"
+coercion,"(pressur|manipulat)(ed|ion|e)","pressure/manipulation variants"
+victim,"i (was|am) (a )?victim","victim statements"
+victim,"i (surviv|went through)","survivor phrasing"
+sexual,"non-?consensual","hyphen/no hyphen"
+context,"he (made|forced) me (to )?\w+","captures coercive action patterns"
+story,"(this|that) happened to me","personal experience"
