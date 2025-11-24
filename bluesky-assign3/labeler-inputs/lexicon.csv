@@ -15,6 +15,40 @@ emotional coercion,financial abuse,FALSE,controlling resources
 emotional coercion,smear campaign,FALSE,social sabotage
 emotional coercion,dv,FALSE,domestic violence abbreviation
 emotional coercion,ipv,FALSE,intimate partner violence abbreviation
+emotional coercion,forced me to,FALSE,forced pattern
+emotional coercion,forced me into,FALSE,another forced verb structure
+emotional coercion,he made me do,FALSE,coercive phrasing
+emotional coercion,she made me do,FALSE,gender variant phrase
+emotional coercion,pressured me into,FALSE,soft coercion
+emotional coercion,manipulated me into,FALSE,soft coercion via manipulation
+emotional coercion,guilt-tripped me,FALSE,emotional coercion
+emotional coercion,manipulat(?:ed|ing|e),TRUE,manipulation variants
+emotional coercion,isolat(?:ed|ing|e),TRUE,isolation variants
+emotional coercion,threat(?:ened|ening|s),TRUE,threats
+emotional coercion,narc(?:issist| abuse|issistic),TRUE,narcissism variants
+emotional coercion,guilt[\W_]*trip(?:ped|ping)?,TRUE,guilt-tripping
+emotional coercion,"\b(show|send|post|dm|drop|share)\s+(?:me\s+|us\s+)?(?:ur|your|u|yr|the)?\s*(tits?|boobs?|breasts?|nudes?|pics?|photos?|vids?|videos?|pussy|dick|cock|ass|feet|body)\b",TRUE,"Master solicitation pattern (e.g. 'show me your tits')"
+emotional coercion,"\b(i\s+)?(want|wanna|need)\s+to\s+see\s+(?:ur|your|u|the)?\s*(tits?|boobs?|nudes?|pussy|dick|cock)\b",TRUE,"Desire/Demand pattern (e.g. 'i wanna see your...')"
+emotional coercion,"\b(send|drop)\s+(the\s+)?(link|content|vids|pics)\b",TRUE,"Context-dependent solicitation (e.g. 'drop the link')"
+reputational,"\b(leak|expose|upload|post)\s+(ur|your)\s+(shit|nudes?|pics?|vids?|chat|dms?)\b",TRUE,"Threat pattern (e.g. 'I will leak your nudes')"
+emotional coercion,"send nudes",FALSE,"Exact phrase match (High confidence)"
+emotional coercion,"pics?",FALSE,"Low confidence/Context dependent one-word ask"
+emotional coercion,"\b(dumb|stupid|dirty|little|owned|slave)\s+(bitch|slut|whore|cunt|h[o0]e|toy|pig)\b",TRUE,"Degradation Pattern (e.g. 'slave bitch', 'dirty whore')"
+emotional coercion,"\b(cum|fuck|sex)\s*(dump|bucket|toy|hole|sleeve|doll)\b",TRUE,"Objectification Pattern (e.g. 'cum dump', 'fuck toy')"
+emotional coercion,"\bsl[u\*@]+t[sz]?\b",TRUE,"Slut + variations (slut, sluts, sluuut, sl*t)"
+emotional coercion,"\bwh[o0\*]+(?:re|r)(?:s|z)?\b",TRUE,"Whore + variations (whore, wh0re, whores)"
+emotional coercion,"\bb[i1!l\*]+t?ch(?:es|z)?\b",TRUE,"Bitch + variations (bitch, b1tch, b*tch)"
+emotional coercion,"\bc[u\*]+nt[sz]?\b",TRUE,"Cunt + variations (cunt, c*nt)"
+emotional coercion,"\bh[o0][e3]s?\b",TRUE,"Hoe + variations (hoe, h0e)"
+emotional coercion,"\bsk[a4\*]nk[sz]?\b",TRUE,"Skank + variations"
+emotional coercion,"\b(breed|breeding)\s+(stock|sow|mare)\b",TRUE,"Dehumanizing breeding terminology"
+emotional coercion,"\b(knows?|know)\s+(ur|your|yr)\s+place\b",TRUE,"Subjugation phrase often used with slurs"
+
+sexual violence,assault(?:ed|ing)?,FALSE,assaulted variants
+sexual violence,harass(?:ed|ing|ment)?,FALSE,harassment forms
+sexual violence,non[\W_]*con,TRUE,non-con in kink/fic
+sexual violence,forced[\W_]*sex,FALSE,forced sex phrases
+sexual violence,touched[\W_]*without[\W_]*consent,FALSE,non-consensual touch
 sexual violence,sexual assault,FALSE,explicit term
 sexual violence,rape,FALSE,explicit term
 sexual violence,r[\W_]*[a@4][\W_]*p[\W_]*e,TRUE,rape variants including r*pe r@pe r4pe etc
@@ -32,13 +66,17 @@ sexual violence,m[\W_]*o[\W_]*l[\W_]*e[\W_]*s[\W_]*t(?:ed|ing)?,TRUE,molest vari
 sexual violence,sa survivor,FALSE,sexual assault survivor
 sexual violence,csa survivor,FALSE,child sexual assault survivor
 sexual violence,r*pe,FALSE,censored explicit term
-sexual violence,without consent,FALSE,explicit non-consent phrase
 sexual violence,without my consent,FALSE,variant non-consent
+sexual,"\b(without|no|lack\s+of)\s+consent\b",TRUE,"Prepositional negation (e.g. 'without consent')"
 sexual violence,non[\W_]*consensual,TRUE,non-consensual spelling variants
+sexual,"\bnon-?consensual\b",TRUE,"Adjective form (e.g. 'non-consensual')"
 sexual violence,i[\W_]*(did(?:n't| not)|do(?:n't| not))[\W_]*want[\W_]*to[\W_]*but,TRUE,non-consensual phrasing w/ contractions
 sexual violence,sexually coerced,FALSE,explicit coercion phrase
-sexual violence,sa,FALSE,sexual assault abbreviation
 sexual violence,csa,FALSE,child sexual assault abbreviation
+sexual,"\b(did|does|could|can|would|was|were)n(?:'|o)?t\s+(?:even\s+|give\s+)?consent(?:ed)?\b",TRUE,"Verbal negation (e.g. 'did not consent', 'couldn't consent')"
+sexual,"\bunable\s+to\s+consent\b",TRUE,"Capacity negation (common in intoxication/age contexts)"
+sexual,"\bconsent\s+(was|is)\s+(not|never)\s+(given|involved)\b",TRUE,"Passive negation (e.g. 'consent was never given')"
+
 reputational coercion,sextortion,FALSE,direct sextortion term
 reputational coercion,revenge porn,FALSE,non-consensual image sharing
 reputational coercion,leak photos,FALSE,threat to share images
@@ -56,6 +94,11 @@ reputational coercion,threatened to post,FALSE,threat to upload/share
 reputational coercion,blackmail nudes,FALSE,blackmail + nudes
 reputational coercion,blackmailed me,FALSE,general blackmail pattern
 reputational coercion,if[\W_]*you[\W_]*(do(?:n't| not)|did(?:n't| not))[\W_]*(send|pay),TRUE,conditional coercion
+reputational coercion,expos(?:ed|ing|e),TRUE,exposure variants
+reputational coercion,leak(?:ed|ing)?[\W_]*nudes,TRUE,leaked nudes
+reputational coercion,smear[\W_]*campaign,FALSE,smear campaign
+reputational coercion,ruin[\W_]*my[\W_]*(reputation|life),TRUE,ruin reputation/life threats
+
 self harm,suicide threat,FALSE,coercive threat
 self harm,threatened suicide,FALSE,coercive threat
 self harm,hurt (himself|herself|themselves),TRUE,threat of self-harm
@@ -67,11 +110,71 @@ self harm,kys,FALSE,kill yourself abbreviation
 self harm,s[\W_]*u[\W_]*i[\W_]*c[\W_]*i[\W_]*d[\W_]*e,TRUE,suicide variants
 self harm,k[\W_]*(i|1|l)[\W_]*l[\W_]*l(?:ed|ing|s)?,TRUE,kill variants
 self harm,k[\W_]*(i|1|l)[\W_]*l[\W_]*l[\W_]*(myself|himself|herself|themselves),TRUE,kill myself/himself/herself/themselves
-self harm,sh,FALSE,self harm abbreviation
-emotional coercion,forced me to,FALSE,forced pattern
-emotional coercion,forced me into,FALSE,another forced verb structure
-emotional coercion,he made me do,FALSE,coercive phrasing
-emotional coercion,she made me do,FALSE,gender variant phrase
-emotional coercion,pressured me into,FALSE,soft coercion
-emotional coercion,manipulated me into,FALSE,soft coercion via manipulation
-emotional coercion,guilt-tripped me,FALSE,emotional coercion
+self harm,cut(?:ting| myself),TRUE,cutting variants
+self harm,self[\W_]*injur(?:y|ies|ed),TRUE,self-injury
+self harm,overdose(?:d|ing)?,TRUE,overdose attempts
+self harm,harm[\W_]*myself,FALSE,self-harm phrases
+self harm,s[\W_]*e[\W_]*l[\W_]*f[\W_]*h[\W_]*a[\W_]*r[\W_]*m,TRUE,self-harm censored
+
+trauma discussion,as a survivor,FALSE,personal survivor identifier
+trauma discussion,i was abused,FALSE,first-person abuse disclosure
+trauma discussion,my story of,FALSE,personal trauma narrative
+trauma discussion,trigger warning: sa,FALSE,warning for sexual assault story
+trauma discussion,content warning: rape,FALSE,warning for rape discussion
+trauma discussion,s[\W_]*[a@4][\W_]*survivor,TRUE,SA survivor variants
+trauma discussion,i survived,FALSE,personal survival statement
+trauma discussion,sharing my experience,FALSE,personal sharing
+trauma discussion,healing from trauma,FALSE,recovery discussion
+trauma discussion,ptsd from assault,FALSE,trauma aftermath
+trauma discussion,as a survivor,FALSE,personal survivor identifier
+trauma discussion,i was abused,FALSE,first-person abuse disclosure
+trauma discussion,my story of,FALSE,personal trauma narrative
+trauma discussion,trigger warning: sa,FALSE,warning for sexual assault story
+trauma discussion,content warning: rape,FALSE,warning for rape discussion
+trauma discussion,s[\W_]*[a@4][\W_]*survivor,TRUE,SA survivor variants
+trauma discussion,i survived,FALSE,personal survival statement
+trauma discussion,sharing my experience,FALSE,personal sharing
+trauma discussion,healing from trauma,FALSE,recovery discussion
+trauma discussion,ptsd from assault,FALSE,trauma aftermath
+
+fictional depiction,in my book,FALSE,fictional story reference
+fictional depiction,fanfic where,FALSE,fanfiction depiction
+fictional depiction,story involving coercion,FALSE,fictional narrative
+fictional depiction,depiction of abuse,FALSE,fictional abuse portrayal
+fictional depiction,in the movie,FALSE,film depiction
+fictional depiction,character experiences rape,FALSE,fictional assault
+fictional depiction,dark romance with,FALSE,fictional dark themes
+fictional depiction,trigger warning: fictional sa,FALSE,warning for fictional SA
+fictional depiction,f[\W_]*i[\W_]*c[\W_]*t[\W_]*i[\W_]*o[\W_]*n[\W_]*a[\W_]*l[\W_]*depiction,TRUE,fictional depiction variants
+fictional depiction,in my fanfic,FALSE,fanfic reference
+fictional depiction,in my book,FALSE,fictional story reference
+fictional depiction,fanfic where,FALSE,fanfiction depiction
+fictional depiction,story involving coercion,FALSE,fictional narrative
+fictional depiction,depiction of abuse,FALSE,fictional abuse portrayal
+fictional depiction,in the movie,FALSE,film depiction
+fictional depiction,character experiences rape,FALSE,fictional assault
+fictional depiction,dark romance with,FALSE,fictional dark themes
+fictional depiction,trigger warning: fictional sa,FALSE,warning for fictional SA
+fictional depiction,f[\W_]*i[\W_]*c[\W_]*t[\W_]*i[\W_]*o[\W_]*n[\W_]*a[\W_]*l[\W_]*depiction,TRUE,fictional depiction variants
+fictional depiction,in my fanfic,FALSE,fanfic reference
+
+traumatic news,breaking: assault,FALSE,news headline assault
+traumatic news,report: rape case,FALSE,news report on rape
+traumatic news,victim of coercion,FALSE,news victim mention
+traumatic news,incident involving sa,FALSE,news SA incident
+traumatic news,convicted of assault,FALSE,news conviction
+traumatic news,trial for abuse,FALSE,news abuse trial
+traumatic news,scandal: sexual coercion,FALSE,news coercion scandal
+traumatic news,trigger warning: news of rape,FALSE,warning for news rape
+traumatic news,n[\W_]*e[\W_]*w[\W_]*s[\W_]*of[\W_]*assault,TRUE,news of assault variants
+traumatic news,article about survivor,FALSE,news survivor story
+traumatic news,breaking: assault,FALSE,news headline assault
+traumatic news,report: rape case,FALSE,news report on rape
+traumatic news,victim of coercion,FALSE,news victim mention
+traumatic news,incident involving sa,FALSE,news SA incident
+traumatic news,convicted of assault,FALSE,news conviction
+traumatic news,trial for abuse,FALSE,news abuse trial
+traumatic news,scandal: sexual coercion,FALSE,news coercion scandal
+traumatic news,trigger warning: news of rape,FALSE,warning for news rape
+traumatic news,n[\W_]*e[\W_]*w[\W_]*s[\W_]*of[\W_]*assault,TRUE,news of assault variants
+traumatic news,article about survivor,FALSE,news survivor story
