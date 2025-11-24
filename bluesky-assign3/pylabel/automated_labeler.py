@@ -39,7 +39,7 @@ class AutomatedLabeler:
         self.phrase_automaton = self.build_automaton(self.literal_lexicon)
         
         # Load human-review signaling keywords
-        self.review_literals, self.review_regexes = self.load_review_keywords(f"{input_dir}/review-lexicon.csv")
+        self.review_literals, self.review_regexes = self.load_review_keywords(f"{input_dir}/meta-label.csv")
 
     def load_lexicon(self, filepath: str):
         """
@@ -156,19 +156,19 @@ class AutomatedLabeler:
         needs_review = False
         for review_word in self.review_literals:
             if review_word in content:
-                labels.add("human-review")
+                labels.add("meta:needs-human-review")
                 needs_review = True
-                severity_level = max(1, severity_level - 1)
+                severity_score -= 1
                 break
         if not needs_review:
             for review_regex in self.review_regexes:
                 if review_regex.search(content):
-                    labels.add("human-review")
-                    severity_level = max(1, severity_level - 1)
+                    labels.add("meta:needs-human-review")
+                    severity_score -= 1
                     break
         
         # perspective API scoring
-        scores = self.get_perspective_scores(content)
+        # scores = self.get_perspective_scores(content)
 
         # humor / sarcasm
         # humor_flags = scores.get("SARCASM", 0.0) > 0.7 or scores.get("FLIRTATION", 0.0) > 0.7
@@ -192,6 +192,7 @@ class AutomatedLabeler:
             severity_level = 2
         else:
             severity_level = 1
-        labels.add(f"severity-level-{severity_level}")
+        #TODO add this back in later
+        # labels.add(f"severity-level-{severity_level}")
         
         return list(labels)

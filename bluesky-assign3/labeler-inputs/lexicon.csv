@@ -1,88 +1,77 @@
-category,phrase,notes
-emotional coercion,"gaslight","psychological manipulation"
-emotional coercion,"lovebomb","manipulative affection tactic"
-emotional coercion,"darvo","deny attack reverse victim offender"
-emotional coercion,"narcissist","abuser descriptor"
-emotional coercion,"narc abuse","narcissistic abuse"
-emotional coercion,"trauma bond","psychological dependency"
-emotional coercion,"stonewalling","refusal to communicate"
-emotional coercion,"silent treatment","punishment via silence"
-emotional coercion,"hoovering","attempt to suck victim back in"
-emotional coercion,"walking on eggshells","fear response/hyper-vigilance"
-emotional coercion,"coercive control","core academic term"
-emotional coercion,"reactive abuse","victim reacting to abuse"
-emotional coercion,"financial abuse","controlling resources"
-emotional coercion,"smear campaign","social sabotage"
-emotional coercion,"dv","domestic violence abbreviation"
-emotional coercion,"ipv","intimate partner violence abbreviation"
-sexual violence,"sexual assault","explicit term"
-sexual violence,"rape","explicit term"
-sexual violence,"rapist","perpetrator descriptor"
-sexual violence,"groomed","manipulation process"
-sexual violence,"grooming","manipulation process"
-sexual violence,"stealthing","non-consensual condom removal"
-sexual violence,"sexual coercion","explicit term"
-sexual violence,"assaulted","past tense explicit"
-sexual violence,"groped","non-consensual touch"
-sexual violence,"molested","explicit term"
-sexual violence,"sa survivor","sexual assault survivor"
-sexual violence,"csa survivor","child sexual assault survivor"
-sexual violence,"r*pe","censored explicit term"
-sexual violence,"rape","uncensored explicit term"
-sexual violence,"without consent","explicit non-consent phrase"
-sexual violence,"without my consent","variant non-consent"
-sexual violence,"non-consensual","general term for non-consensual acts"
-sexual violence,"i didn't want to but","common non-consensual phrasing"
-sexual violence,"sexually coerced","explicit coercion phrase"
-sexual violence,"sa","sexual assault abbreviation"
-sexual violence,"csa","child sexual assault abbreviation"
-reputational coercion,"sextortion","direct sextortion term"
-reputational coercion,"revenge porn","non-consensual image sharing"
-reputational coercion,"leak photos","threat to share images"
-reputational coercion,"leaked nudes","past tense image sharing"
-reputational coercion,"blackmail","financial or social coercion"
-reputational coercion,"blackmailing","active coercion"
-reputational coercion,"doxxing","sharing private info"
-reputational coercion,"doxxed","past tense private info share"
-reputational coercion,"threatened to expose","threat to expose content/secrets"
-reputational coercion,"ruin my reputation","social threat"
-reputational coercion,"ruin my life","existential threat"
-reputational coercion,"send to my boss","employment threat"
-reputational coercion,"threatened to leak","leak + threat"
-reputational coercion,"threatened to post","threat to upload/share"
-reputational coercion,"blackmail nudes","blackmail + nudes"
-reputational coercion,"blackmailed me","general blackmail pattern"
-reputational coercion,"if you don't send","conditional threat used in sextortion"
-reputational coercion,"if you don't pay","payment threat variant"
-self harm,"suicide threat","coercive threat"
-self harm,"threatened suicide","coercive threat"
-self harm,"hurt himself","threat of self-harm"
-self harm,"hurt herself","threat of self-harm"
-self harm,"kill himself","threat of suicide"
-self harm,"kill herself","threat of suicide"
-self harm,"if you leave","conditional threat context"
-self harm,"if you break up","conditional threat context"
-self harm,"kms","kill myself abbreviation"
-self harm,"kys","kill yourself abbreviation"
-self harm,"su*cide","censored term"
-self harm,"suicide","uncensored term"
-self harm,"k*ll myself","censored term"
-self harm,"kill myself","uncensored term"
-self harm,"sh","self harm abbreviation"
-emotional coercion"forced me to","forced pattern"
-emotional coercion"forced me into","another forced verb structure"
-emotional coercion"he made me do","coercive phrasing"
-emotional coercion"she made me do","gender variant phrase"
-emotional coercion"pressured me into","soft coercion"
-emotional coercion"manipulated me into","soft coercion via manipulation"
-emotional coercion"guilt-tripped me","emotional coercion"
-sexual violence,"r[\W_]*[a@4][\W_]*p[\W_]*e",TRUE,rape variants including r*pe r@pe r4pe etc
-sexual violence,"r[\W_]*[a@4][\W_]*p[\W_]*i[\W_]*s[\W_]*t",TRUE,rapist variants
-sexual violence,"m[\W_]*o[\W_]*l[\W_]*e[\W_]*s[\W_]*t(?:ed|ing)?",TRUE,molest variants
-sexual violence,"g[\W_]*r[\W_]*[o0][\W_]*[o0][\W_]*m(?:ed|ing)?",TRUE,groom variants
-self harm,"k[\W_]*(i|1|l)[\W_]*l[\W_]*l(?:ed|ing|s)?",TRUE,kill variants
-self harm,"k[\W_]*(i|1|l)[\W_]*l[\W_]*l[\W_]*(myself|himself|herself|themselves)",TRUE,kill myself/himself/herself/themselves
-self harm,"s[\W_]*u[\W_]*i[\W_]*c[\W_]*i[\W_]*d[\W_]*e",TRUE,suicide variants
-sexual violence,"non[\W_]*consensual",TRUE,non-consensual spelling variants
-sexual violence,"i[\W_]*(did(?:n't| not)|do(?:n't| not))[\W_]*want[\W_]*to[\W_]*but",TRUE,non-consensual phrasing w/ contractions
-reputational coercion,"if[\W_]*you[\W_]*(do(?:n't| not)|did(?:n't| not))[\W_]*(send|pay)",TRUE,conditional coercion
+category,phrase_or_pattern,is_regex,notes
+emotional coercion,gaslight,FALSE,psychological manipulation
+emotional coercion,lovebomb,FALSE,manipulative affection tactic
+emotional coercion,darvo,FALSE,deny attack reverse victim offender
+emotional coercion,narcissist,FALSE,abuser descriptor
+emotional coercion,narc abuse,FALSE,narcissistic abuse
+emotional coercion,trauma bond,FALSE,psychological dependency
+emotional coercion,stonewalling,FALSE,refusal to communicate
+emotional coercion,silent treatment,FALSE,punishment via silence
+emotional coercion,hoovering,FALSE,attempt to suck victim back in
+emotional coercion,walking on eggshells,FALSE,fear response/hyper-vigilance
+emotional coercion,coercive control,FALSE,core academic term
+emotional coercion,reactive abuse,FALSE,victim reacting to abuse
+emotional coercion,financial abuse,FALSE,controlling resources
+emotional coercion,smear campaign,FALSE,social sabotage
+emotional coercion,dv,FALSE,domestic violence abbreviation
+emotional coercion,ipv,FALSE,intimate partner violence abbreviation
+sexual violence,sexual assault,FALSE,explicit term
+sexual violence,rape,FALSE,explicit term
+sexual violence,r[\W_]*[a@4][\W_]*p[\W_]*e,TRUE,rape variants including r*pe r@pe r4pe etc
+sexual violence,rapist,FALSE,perpetrator descriptor
+sexual violence,r[\W_]*[a@4][\W_]*p[\W_]*i[\W_]*s[\W_]*t,TRUE,rapist variants
+sexual violence,groomed,FALSE,manipulation process
+sexual violence,grooming,FALSE,manipulation process
+sexual violence,g[\W_]*r[\W_]*[o0][\W_]*[o0][\W_]*m(?:ed|ing)?,TRUE,groom variants
+sexual violence,stealthing,FALSE,non-consensual condom removal
+sexual violence,sexual coercion,FALSE,explicit term
+sexual violence,assaulted,FALSE,past tense explicit
+sexual violence,groped,FALSE,non-consensual touch
+sexual violence,molested,FALSE,explicit term
+sexual violence,m[\W_]*o[\W_]*l[\W_]*e[\W_]*s[\W_]*t(?:ed|ing)?,TRUE,molest variants
+sexual violence,sa survivor,FALSE,sexual assault survivor
+sexual violence,csa survivor,FALSE,child sexual assault survivor
+sexual violence,r*pe,FALSE,censored explicit term
+sexual violence,without consent,FALSE,explicit non-consent phrase
+sexual violence,without my consent,FALSE,variant non-consent
+sexual violence,non[\W_]*consensual,TRUE,non-consensual spelling variants
+sexual violence,i[\W_]*(did(?:n't| not)|do(?:n't| not))[\W_]*want[\W_]*to[\W_]*but,TRUE,non-consensual phrasing w/ contractions
+sexual violence,sexually coerced,FALSE,explicit coercion phrase
+sexual violence,sa,FALSE,sexual assault abbreviation
+sexual violence,csa,FALSE,child sexual assault abbreviation
+reputational coercion,sextortion,FALSE,direct sextortion term
+reputational coercion,revenge porn,FALSE,non-consensual image sharing
+reputational coercion,leak photos,FALSE,threat to share images
+reputational coercion,leaked nudes,FALSE,past tense image sharing
+reputational coercion,blackmail,FALSE,financial or social coercion
+reputational coercion,blackmailing,FALSE,active coercion
+reputational coercion,doxxing,FALSE,sharing private info
+reputational coercion,doxxed,FALSE,past tense private info share
+reputational coercion,threatened to expose,FALSE,threat to expose content/secrets
+reputational coercion,ruin my reputation,FALSE,social threat
+reputational coercion,ruin my life,FALSE,existential threat
+reputational coercion,send to my boss,FALSE,employment threat
+reputational coercion,threatened to leak,FALSE,leak + threat
+reputational coercion,threatened to post,FALSE,threat to upload/share
+reputational coercion,blackmail nudes,FALSE,blackmail + nudes
+reputational coercion,blackmailed me,FALSE,general blackmail pattern
+reputational coercion,if[\W_]*you[\W_]*(do(?:n't| not)|did(?:n't| not))[\W_]*(send|pay),TRUE,conditional coercion
+self harm,suicide threat,FALSE,coercive threat
+self harm,threatened suicide,FALSE,coercive threat
+self harm,hurt (himself|herself|themselves),TRUE,threat of self-harm
+self harm,kill (himself|herself|themselves),TRUE,threat of suicide
+self harm,if you leave,FALSE,conditional threat context
+self harm,if you break up,FALSE,conditional threat context
+self harm,kms,FALSE,kill myself abbreviation
+self harm,kys,FALSE,kill yourself abbreviation
+self harm,s[\W_]*u[\W_]*i[\W_]*c[\W_]*i[\W_]*d[\W_]*e,TRUE,suicide variants
+self harm,k[\W_]*(i|1|l)[\W_]*l[\W_]*l(?:ed|ing|s)?,TRUE,kill variants
+self harm,k[\W_]*(i|1|l)[\W_]*l[\W_]*l[\W_]*(myself|himself|herself|themselves),TRUE,kill myself/himself/herself/themselves
+self harm,sh,FALSE,self harm abbreviation
+emotional coercion,forced me to,FALSE,forced pattern
+emotional coercion,forced me into,FALSE,another forced verb structure
+emotional coercion,he made me do,FALSE,coercive phrasing
+emotional coercion,she made me do,FALSE,gender variant phrase
+emotional coercion,pressured me into,FALSE,soft coercion
+emotional coercion,manipulated me into,FALSE,soft coercion via manipulation
+emotional coercion,guilt-tripped me,FALSE,emotional coercion
