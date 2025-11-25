@@ -58,6 +58,8 @@ Copy `.env-TEMPLATE` → `.env`:
 USERNAME=your_handle.bsky.social
 PW=your_app_password
 ```
+In automated_labeler.py, replace `PERSPECTIVE_API_KEY` value with your own perspective API key.
+Refer to [Perspective API documentation](https://developers.perspectiveapi.com/s/docs-get-started?language=en_US) for help creating your own API key.
 
 ### 3. Run the test file (this runs everything including the labeler)
 ```

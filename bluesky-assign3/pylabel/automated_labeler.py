@@ -9,7 +9,7 @@ import requests
 import re
 
 PERSPECTIVE_API_URL = "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze"
-PERSPECTIVE_API_KEY = "AIzaSyBDHeWoNPbn9vOlLHGDG4iBwFEjn9VEITI"
+PERSPECTIVE_API_KEY = "YOUR_API_KEY_HERE"  # Replace with your actual API key
 
 # Valid labels allowed to be returned
 label_names = set([
@@ -162,7 +162,6 @@ class AutomatedLabeler:
                     severity_score += 2 if category in CRITICAL_LABELS else 1
         
         # Check for human review keywords
-        # TODO discuss: bump down severity level by 1 if human review is needed
         needs_review = False
         for review_word in self.review_literals:
             if review_word in content:
