@@ -5,11 +5,11 @@ from atproto import Client
 from .label import post_from_url
 import pandas as pd
 import ahocorasick
+import requests
 import re
 
-PERSPECTIVE_API_URL = "https://commentanalyzer.googleapis.com/v1/comments:analyze"
-#TODO: replace with Perspective API key
-# PERSPECTIVE_API_KEY = "<API_KEY>"
+PERSPECTIVE_API_URL = "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze"
+PERSPECTIVE_API_KEY = "AIzaSyBDHeWoNPbn9vOlLHGDG4iBwFEjn9VEITI"
 
 # Valid labels allowed to be returned
 label_names = set([
@@ -17,7 +17,7 @@ label_names = set([
     "emotional coercion",
     "reputational coercion",
     "self harm",
-    "survivor discussion",
+    "trauma discussion",
     "fictional depiction",
     "traumatic news"
 ])
@@ -73,29 +73,39 @@ class AutomatedLabeler:
 
         return literal_map, regex_patterns
     
-    # def get_perspective_scores(text: str, attributes=None):
-    #     if attributes is None:
-    #         attributes = ["TOXICITY", "SARCASM", "FLIRTATION", "INSULT", "THREAT", "SEXUAL_EXPLICIT"]
+    def get_perspective_scores(self, text: str, attributes=None):
+        if attributes is None:
+            attributes = ["TOXICITY", "FLIRTATION", "INSULT", "THREAT", "SEVERE_TOXICITY", "INCOHERENT"]
 
-    #     data = {
-    #         "comment": {"text": text},
-    #         "languages": ["en"],
-    #         "requestedAttributes": {attr: {} for attr in attributes}
-    #     }
-    #     response = requests.post(
-    #         f"{PERSPECTIVE_API_URL}?key={PERSPECTIVE_API_KEY}",
-    #         json=data,
-    #         timeout=10
-    #     ).json()
+        data = {
+            "comment": {"text": text},
+            "languages": ["en"],
+            "requestedAttributes": {attr: {} for attr in attributes}
+        }
         
-    #     # Extract scores
-    #     scores = {}
-    #     for attr in attributes:
-    #         try:
-    #             scores[attr] = response["attributeScores"][attr]["summaryScore"]["value"]
-    #         except KeyError:
-    #             scores[attr] = 0.0
-    #     return scores
+        try:
+            response = requests.post(
+                f"{PERSPECTIVE_API_URL}?key={PERSPECTIVE_API_KEY}",
+                json=data,
+                timeout=10
+            ) # first 500 chars
+            response.raise_for_status()  # raise if HTTP error
+            scores_json = response.json()
+        except requests.exceptions.RequestException as e:
+            print("[ERROR] Perspective API request failed:", e)
+            return {attr: 0.0 for attr in attributes}
+        except ValueError as e:
+            print("[ERROR] Failed to parse JSON from Perspective API:", e)
+            return {attr: 0.0 for attr in attributes}
+        
+        # Extract scores
+        scores = {}
+        for attr in attributes:
+            if attr in scores_json.get("attributeScores", {}):
+                scores[attr] = scores_json["attributeScores"][attr]["summaryScore"]["value"]
+            else:
+                scores[attr] = 0.0  # fallback
+        return scores
     
     def load_review_keywords(self, filepath: str):
         """Load review-trigger keywords from CSV into two lists: regex and literal."""
@@ -130,7 +140,7 @@ class AutomatedLabeler:
         Returns a list of labels.
         """
         post = post_from_url(self.client, url)
-        content = post.value.text.lower()
+        content = str(post.value.text).lower()
 
         labels = set()
         matches_found = set()
@@ -167,32 +177,33 @@ class AutomatedLabeler:
                     severity_score -= 1
                     break
         
-        # perspective API scoring
-        # scores = self.get_perspective_scores(content)
+        # if label found, adjust severity based on Perspective API
+        if labels:
+            # perspective API scoring
+            scores = self.get_perspective_scores(content)
 
-        # humor / sarcasm
-        # humor_flags = scores.get("SARCASM", 0.0) > 0.7 or scores.get("FLIRTATION", 0.0) > 0.7
-        # if humor_flags:
-        #     # TODO decide labels.add("meta:humor-detected")
-        #     severity_level -= 1  # downgrade severity
+            # flags from perspective API
+            humor_flags = scores.get("INCOHERENT", 0.0) > 0.7 or scores.get("FLIRTATION", 0.0) > 0.7
+            if humor_flags:
+                severity_score -= 1  # downgrade severity
+                labels.add("meta:needs-human-review")
 
-        # # Toxicity adjustment
-        # toxicity = scores.get("TOXICITY", 0.0)
-        # if toxicity > 0.8:
-        #     severity_score += 1
-        # elif toxicity >= 0.6:
-        #     severity_level += 0.5
-        # elif toxicity < 0.3:
-        #     severity_level -= 0.5            
+            # Toxicity adjustment
+            toxicity = scores.get("TOXICITY", 0.0)
+            if toxicity > 0.8:
+                severity_score += 1
+            elif toxicity >= 0.6:
+                severity_score += 0.5
+            elif toxicity < 0.3:
+                severity_score -= 0.5            
         
-        # Final severity level assignment
-        if severity_score >= 6:
-            severity_level = 3
-        elif severity_score >= 3:
-            severity_level = 2
-        else:
-            severity_level = 1
-        #TODO add this back in later
-        # labels.add(f"severity-level-{severity_level}")
+            # Final severity level assignment
+            if severity_score >= 6:
+                severity_level = 3
+            elif severity_score >= 3:
+                severity_level = 2
+            else:
+                severity_level = 1
+            labels.add(f"severity-level-{severity_level}")
         
         return list(labels)
