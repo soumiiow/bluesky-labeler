@@ -11,8 +11,8 @@ import time
 
 PERSPECTIVE_API_URL = "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze"
 
-
-PERSPECTIVE_API_KEY = "AIzaSyBDHeWoNPbn9vOlLHGDG4iBwFEjn9VEITI"
+#Put your API key here
+PERSPECTIVE_API_KEY = ""
 PERSPECTIVE_SLEEP_SECONDS = 0.4  # small delay to avoid hitting rate limits
 
 
