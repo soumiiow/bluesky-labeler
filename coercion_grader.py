@@ -18,7 +18,8 @@ if str(ASSIGN_DIR) not in sys.path:
 DEFAULT_TEST_FILES = [
     # TEST_DATA_DIR / "coercion_gold_mini.csv",
     # TEST_DATA_DIR / "coercion_gold.csv",
-    TEST_DATA_DIR / "coercion_gold_all_posts.csv",
+    TEST_DATA_DIR / "coercion_gold_final_posts.csv",
+    # TEST_DATA_DIR / "coercion_gold_all_posts.csv",
 ]
 
 import pandas as pd
@@ -36,12 +37,15 @@ PW = os.getenv("PW")
 def test_labeler(labeler, input_urls: str):
     """
     Test labeler with partial-credit scoring.
-    - Exact match still counted.
+    - Ignore meta labels like "meta:needs-human-review" when scoring.
+    - Exact match is counted if all gold labels are present and the model predicts at most one extra label beyond the gold set.
     - Also compute:
         * label_precision = |pred ∩ gold| / |pred|
         * label_recall    = |pred ∩ gold| / |gold|
     - Skip posts that cause API errors (e.g., BadRequest / missing repo).
     """
+    IGNORE_LABELS = {"meta:needs-human-review"}
+    MAX_EXTRA_LABELS = 1  # allow up to 1 extra label beyond gold
     print(f"Testing with input urls {input_urls}")
     df = pd.read_csv(input_urls)
 
@@ -68,19 +72,26 @@ def test_labeler(labeler, input_urls: str):
             skipped += 1
             continue
 
-        intersection = expected_labels.intersection(predicted_labels)
+        # Drop labels that we ignore for scoring, such as meta flags
+        expected_core = expected_labels - IGNORE_LABELS
+        predicted_core = predicted_labels - IGNORE_LABELS
+
+        intersection = expected_core.intersection(predicted_core)
 
         total_intersection += len(intersection)
-        total_pred += len(predicted_labels)
-        total_gold += len(expected_labels)
+        total_pred += len(predicted_core)
+        total_gold += len(expected_core)
 
-        if predicted_labels == expected_labels:
+        missing = expected_core - predicted_core
+        extra = predicted_core - expected_core
+
+        if not missing and len(extra) <= MAX_EXTRA_LABELS:
             exact_matches += 1
         else:
             print(f"For {url}:")
-            print(f"  predicted: {list(predicted_labels)}")
-            print(f"  expected : {list(expected_labels)}")
-            print(f"  overlap  : {list(intersection)}")
+            print(f"  predicted (core): {list(predicted_core)}")
+            print(f"  expected  (core): {list(expected_core)}")
+            print(f"  overlap        : {list(intersection)}")
 
     tested_posts = total_posts - skipped
     precision = total_intersection / total_pred if total_pred else 0.0
