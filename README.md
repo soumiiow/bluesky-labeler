@@ -22,7 +22,7 @@ The system is lexicon-based and evaluated with **multi-label metrics** (exact-ma
 │   │   └── label.py                 # Shared helpers
 │   │
 │   └── test-data/
-│   │   └── coercion_gold_final_posts.csv   # Final gold test set (URLs + labels)
+│   │   └── all_coercion_posts.csv   # Final gold test set (URLs + labels)
 │   │
 │   └── .env-TEMPLATE                 #configure your bluesky password and social account
 │

@@ -7,9 +7,14 @@ import pandas as pd
 import ahocorasick
 import requests
 import re
+import time
 
 PERSPECTIVE_API_URL = "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze"
-PERSPECTIVE_API_KEY = "YOUR_API_KEY_HERE"  # Replace with your actual API key
+
+
+PERSPECTIVE_API_KEY = "AIzaSyBDHeWoNPbn9vOlLHGDG4iBwFEjn9VEITI"
+PERSPECTIVE_SLEEP_SECONDS = 0.4  # small delay to avoid hitting rate limits
+
 
 # Valid labels allowed to be returned
 label_names = set([
@@ -77,27 +82,37 @@ class AutomatedLabeler:
         if attributes is None:
             attributes = ["TOXICITY", "FLIRTATION", "INSULT", "THREAT", "SEVERE_TOXICITY", "INCOHERENT"]
 
+        # Small delay before each call to avoid hammering the API
+        time.sleep(PERSPECTIVE_SLEEP_SECONDS)
+
         data = {
             "comment": {"text": text},
             "languages": ["en"],
             "requestedAttributes": {attr: {} for attr in attributes}
         }
-        
+
         try:
             response = requests.post(
                 f"{PERSPECTIVE_API_URL}?key={PERSPECTIVE_API_KEY}",
                 json=data,
-                timeout=10
-            ) # first 500 chars
+                timeout=10,
+            )
             response.raise_for_status()  # raise if HTTP error
             scores_json = response.json()
+        except requests.exceptions.HTTPError as e:
+            # If we hit rate limits, log a warning and fall back to neutral scores
+            if e.response is not None and e.response.status_code == 429:
+                print("[WARN] Perspective API rate-limited (429); skipping severity for this post.")
+                return {attr: 0.0 for attr in attributes}
+            print("[ERROR] Perspective API HTTP error:", e)
+            return {attr: 0.0 for attr in attributes}
         except requests.exceptions.RequestException as e:
             print("[ERROR] Perspective API request failed:", e)
             return {attr: 0.0 for attr in attributes}
         except ValueError as e:
             print("[ERROR] Failed to parse JSON from Perspective API:", e)
             return {attr: 0.0 for attr in attributes}
-        
+
         # Extract scores
         scores = {}
         for attr in attributes:
@@ -162,6 +177,7 @@ class AutomatedLabeler:
                     severity_score += 2 if category in CRITICAL_LABELS else 1
         
         # Check for human review keywords
+
         needs_review = False
         for review_word in self.review_literals:
             if review_word in content:
