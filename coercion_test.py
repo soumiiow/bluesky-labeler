@@ -23,7 +23,7 @@ if str(ASSIGN_DIR) not in sys.path:
 
 # IMPORTANT: specify which dataset to use
 DEFAULT_TEST_FILES = [
-    TEST_DATA_DIR / "all_coercion_posts.csv"
+    TEST_DATA_DIR / "data.csv"
 ]
 
 from pylabel import AutomatedLabeler

@@ -18,11 +18,11 @@ The system is lexicon-based and evaluated with **multi-label metrics** (exact-ma
 │   │
 │   ├── pylabel/                     # Main labeler logic
 │   │   ├── __init__.py
-│   │   ├── automated_labeler.py     # Coercion labeler entry point
+│   │   ├── policy_proposal_labeler.py     # Coercion labeler entry point
 │   │   └── label.py                 # Shared helpers
 │   │
 │   └── test-data/
-│   │   └── all_coercion_posts.csv   # Final gold test set (URLs + labels)
+│   │   └── data.csv   # Final gold test set (URLs + labels)
 │   │
 │   └── .env-TEMPLATE                 #configure your bluesky password and social account
 │
@@ -40,8 +40,9 @@ The system is lexicon-based and evaluated with **multi-label metrics** (exact-ma
 ## Running the Labeler & Evaluation
 
 This project does **not** require running a separate test_labeler script.  
+We run everything from the `basic_labeler` branch, and you only need to run `coercion_test.py`—it automatically calls the `policy_proposal_labeler` internally.
 The evaluation script automatically:
-1. Runs the automated coercion labeler
+1. Runs the policy proposal labeler
 2. Fetches posts (if needed)
 3. Compares predicted labels to the gold dataset
 4. Outputs exact‑match + precision/recall scores
@@ -58,7 +59,7 @@ Copy `.env-TEMPLATE` → `.env`:
 USERNAME=your_handle.bsky.social
 PW=your_app_password
 ```
-In automated_labeler.py, replace `PERSPECTIVE_API_KEY` value with your own perspective API key.
+In policy_proposal_labeler.py, replace `PERSPECTIVE_API_KEY` value with your own perspective API key.
 Refer to [Perspective API documentation](https://developers.perspectiveapi.com/s/docs-get-started?language=en_US) for help creating your own API key.
 
 ### 3. Run the test file (this runs everything including the labeler)
