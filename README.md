@@ -81,8 +81,8 @@ From the final dataset of **152 valid posts** (2 skipped due to API errors):
 | Metric                 | Score          |
 |------------------------|----------------|
 | Exact-Match Accuracy   | **46.7% (71/152)** |
-| Label-Level Precision  | **0.29**       |
-| Label-Level Recall     | **0.29**       |
+| Label-Level Precision  | **34.1%**       |
+| Label-Level Recall     | **42.6%**       |
 
 ### Interpretation
 - The system intentionally **over-warns** to avoid missing harmful content.  
