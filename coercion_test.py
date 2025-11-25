@@ -63,6 +63,18 @@ def test_labeler(labeler, input_urls: str):
 
         try:
             predicted_labels = set(labeler.moderate_post(url))
+
+            # --- Severity reporting (based on label tags) ---
+            # If your labeler encodes severity as labels like "severity:1", "severity:2", etc.,
+            # we detect those here and print them per-post for debugging/analysis.
+            severity_labels = [lbl for lbl in predicted_labels if lbl.startswith("severity:")]
+            if severity_labels:
+                # Option 1: print all severity tags
+                print(f"Severity tags for {url}: {severity_labels}")
+            else:
+                # No explicit severity labels found
+                print(f"Severity tags for {url}: []")
+
         except atproto_exceptions.BadRequestError as e:
             print(f"[WARN] skipping {url}: BadRequestError -> {e}")
             skipped += 1
