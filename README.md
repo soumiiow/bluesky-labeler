@@ -31,6 +31,7 @@ The system is lexicon-based and evaluated with **multi-label metrics** (exact-ma
 │
 ├── coercion_test.py               # Test: runs labeler on the gold set and scores it
 ├── transform_uri2url.py             # Utility to convert URIs → public bsky URLs
+├── requirements.txt
 └── README.md
 ```
 
